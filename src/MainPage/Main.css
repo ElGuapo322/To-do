@@ -1,0 +1,22 @@
+.column {
+  border: 2px solid;
+  height: 400px;
+  width: 200px;
+  margin-left: 50px;
+}
+.main {
+  display: flex;
+}
+.task {
+  border: 1px solid;
+  border-radius: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  background-color: rgb(197, 192, 192);
+}
+.newColumn {
+  width: 170px;
+  height: 100px;
+  border: 2px solid;
+  margin-left: 100px;
+}
