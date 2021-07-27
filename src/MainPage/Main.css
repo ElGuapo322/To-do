@@ -3,6 +3,9 @@
   height: 400px;
   width: 200px;
   margin-left: 50px;
+  -webkit-box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
+  -moz-box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
+  box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
 }
 .main {
   display: flex;
@@ -19,4 +22,21 @@
   height: 100px;
   border: 2px solid;
   margin-left: 100px;
+}
+.delete-button {
+  height: 22px;
+  width: 22px;
+  border: 1px solid;
+  background-color: rgb(173, 27, 27);
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.comment {
+  border: 2px solid;
+
+  overflow: hidden;
+  border-radius: 5px;
+  border: 1px solid;
+  background-color: rgb(104, 103, 103);
 }

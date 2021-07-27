@@ -2,45 +2,46 @@ import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import "../MainPage/Main.css";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import { Context } from "../MainPage/MainPage";
+import Task from "./Task";
 
 export default function Column(props) {
+  const context = React.useContext(Context);
   const [addButtonOpen, setAddButtonOpen] = useState(false);
   const [task, setTask] = useState([]);
-  const [taskName, setTaskName] = useState("");
+  const [taskName, setTaskName] = useState("имя не выбрано");
 
   const name = (e) => {
     setTaskName(e.target.value);
   };
 
   const delButton = (e) => {
-    props.onClick(e);
+    context.delColumn(e.target.id);
   };
 
   const submit = (e) => {
     e.preventDefault();
-    let newTask = {
-      id: uuidv4(),
-      parentId: e.target.id,
-      title: taskName,
-    };
-    setTask([...task, newTask]);
-    console.log(task);
-    console.log(e.target);
+    context.createTask(taskName, props.id);
+    setTaskName("имя не выбрано");
     setAddButtonOpen(false);
   };
   return (
     <div id={props.id} className="column">
       <div>
         {props.title}
-        <button id={props.id} onClick={delButton}>
+        <button className="delete-button" id={props.id} onClick={delButton}>
           X
         </button>
       </div>
-      {task.length ? (
-        task.map((i) => <div className="task">{i.title}</div>)
-      ) : (
-        <div></div>
+
+      {context.tasks.map((i) =>
+        props.id === i.parentId ? (
+          <Task grandId={props.id} key={i.id} id={i.id} title={i.title} />
+        ) : (
+          <></>
+        )
       )}
+
       {!addButtonOpen ? (
         <button onClick={() => setAddButtonOpen(true)} id={props.id}>
           AddButton
