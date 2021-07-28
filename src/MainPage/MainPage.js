@@ -27,7 +27,7 @@ export const Context = React.createContext(dataset);
 
 export default function MainPage() {
   const [data, setData] = useState(dataset.columns);
-  const [addButtonOpen, setAddButtonOpen] = useState(false);
+
   const [columnName, setColumnName] = useState("");
   const [addColumnOpen, setAddColumnOpen] = useState(false);
   const [tasks, setTasks] = useState(dataset.tasks);
@@ -92,6 +92,29 @@ export default function MainPage() {
     setAddColumnOpen(false);
   };
 
+  const handleOnDragEnd = ({ destination, source }) => {
+    console.log("from", source);
+    console.log("to", destination);
+
+    if (!destination) {
+      console.log("not dropped in droppable");
+      return;
+    }
+    if (
+      destination.index === source.index &&
+      destination.droppableId === source.droppableId
+    ) {
+      console.log("dropped in same place");
+      return;
+    }
+    const itemCopy = tasks[source.index];
+    console.log("copy", itemCopy.index);
+
+    itemCopy.parentId = destination.droppableId;
+    tasks.splice(source.index, 1);
+    tasks.splice(destination.index, 0, itemCopy);
+  };
+
   return (
     <Context.Provider
       value={{
@@ -104,21 +127,23 @@ export default function MainPage() {
         delColumn,
       }}
     >
-      <div className="main">
-        {data.map((i) => (
-          <Column id={i.id} title={i.title} onClick />
-        ))}
-        {!addColumnOpen ? (
-          <button onClick={() => setAddColumnOpen(true)}>Добавить</button>
-        ) : (
-          <div className="newColumn">
-            <form onSubmit={addColumn}>
-              <input onChange={colName} />
-              <button type="submit">Добавить</button>
-            </form>
-          </div>
-        )}
-      </div>
+      <DragDropContext onDragEnd={handleOnDragEnd}>
+        <div className="main">
+          {data.map((i) => (
+            <Column id={i.id} title={i.title} onClick />
+          ))}
+          {!addColumnOpen ? (
+            <button onClick={() => setAddColumnOpen(true)}>Добавить</button>
+          ) : (
+            <div className="newColumn">
+              <form onSubmit={addColumn}>
+                <input onChange={colName} />
+                <button type="submit">Добавить</button>
+              </form>
+            </div>
+          )}
+        </div>
+      </DragDropContext>
     </Context.Provider>
   );
 }

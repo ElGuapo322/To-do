@@ -28,8 +28,8 @@ export default function Task(props) {
   };
   return (
     <div className="task" id={props.id}>
-      <div>
-        {props.title}
+      <div className="task-title">
+        <div>{props.title}</div>
         <button className="delete-button" onClick={deleteTaskBtn} id={props.id}>
           X
         </button>
@@ -38,7 +38,7 @@ export default function Task(props) {
       {context.comments.map((i) =>
         props.id === i.parentId ? (
           <div className="comment">
-            {i.text}
+            <div>{i.text}</div>
             <button
               className="delete-button"
               onClick={deleteCommentBtn}
@@ -63,7 +63,7 @@ export default function Task(props) {
         <div></div>
       )}
       <button onClick={commentOpen} className="comment-button">
-        c
+        add comment
       </button>
     </div>
   );

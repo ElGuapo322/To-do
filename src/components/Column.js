@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import "../MainPage/Main.css";
-import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { Context } from "../MainPage/MainPage";
 import Task from "./Task";
 
@@ -26,32 +26,70 @@ export default function Column(props) {
     setAddButtonOpen(false);
   };
   return (
-    <div id={props.id} className="column">
-      <div>
-        {props.title}
-        <button className="delete-button" id={props.id} onClick={delButton}>
-          X
-        </button>
-      </div>
+    <Droppable droppableId={props.id}>
+      {(provided) => (
+        <div
+          id={props.id}
+          className="column"
+          {...provided.droppableProps}
+          ref={provided.innerRef}
+        >
+          <div className="title">
+            {props.title}
+            <button className="delete-button" id={props.id} onClick={delButton}>
+              X
+            </button>
+          </div>
+          {!addButtonOpen ? (
+            <button onClick={() => setAddButtonOpen(true)} id={props.id}>
+              AddButton
+            </button>
+          ) : (
+            <form id={props.id} onSubmit={submit}>
+              <input onChange={name} />
+              <button id={props.id}>create</button>
+            </form>
+          )}
 
-      {context.tasks.map((i) =>
-        props.id === i.parentId ? (
-          <Task grandId={props.id} key={i.id} id={i.id} title={i.title} />
-        ) : (
-          <></>
-        )
+          {context.tasks.map((i, index) =>
+            props.id === i.parentId ? (
+              <Draggable key={i.id} draggableId={i.id} index={index}>
+                {(provided) => (
+                  <div
+                    key={i.id}
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                  >
+                    <Task
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      grandId={props.id}
+                      key={i.id}
+                      id={i.id}
+                      title={i.title}
+                    />
+                  </div>
+                )}
+              </Draggable>
+            ) : (
+              <></>
+            )
+          )}
+          {provided.placeholder}
+          {/* {!addButtonOpen ? (
+            <button onClick={() => setAddButtonOpen(true)} id={props.id}>
+              AddButton
+            </button>
+          ) : (
+            <form id={props.id} onSubmit={submit}>
+              <input onChange={name} />
+              <button id={props.id}>create</button>
+            </form>
+          )} */}
+        </div>
       )}
-
-      {!addButtonOpen ? (
-        <button onClick={() => setAddButtonOpen(true)} id={props.id}>
-          AddButton
-        </button>
-      ) : (
-        <form id={props.id} onSubmit={submit}>
-          <input onChange={name} />
-          <button id={props.id}>create</button>
-        </form>
-      )}
-    </div>
+    </Droppable>
   );
 }
