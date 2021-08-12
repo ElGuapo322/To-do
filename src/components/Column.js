@@ -2,27 +2,41 @@ import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import "../MainPage/Main.css";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { Context } from "../MainPage/MainPage";
 import Task from "./Task";
+import { useSelector, useDispatch } from "react-redux";
+import { createTaskAction, deleteColumnAction } from "../Redux/Action";
 
 export default function Column(props) {
-  const context = React.useContext(Context);
   const [addButtonOpen, setAddButtonOpen] = useState(false);
   const [task, setTask] = useState([]);
-  const [taskName, setTaskName] = useState("имя не выбрано");
+  const [taskName, setTaskName] = useState("");
+
+  const dispatch = useDispatch();
+  const { tasks } = useSelector((state) => state.toDoReducer);
 
   const name = (e) => {
     setTaskName(e.target.value);
   };
 
   const delButton = (e) => {
-    context.delColumn(e.target.id);
+    let id = e.target.id;
+
+    dispatch(deleteColumnAction(id));
   };
 
   const submit = (e) => {
     e.preventDefault();
-    context.createTask(taskName, props.id);
-    setTaskName("имя не выбрано");
+    if (taskName === "") {
+      return;
+    }
+
+    const task = {
+      title: taskName,
+      parentId: props.id,
+      id: uuidv4(),
+    };
+    dispatch(createTaskAction(task));
+    setTaskName("");
     setAddButtonOpen(false);
   };
   return (
@@ -46,12 +60,12 @@ export default function Column(props) {
             </button>
           ) : (
             <form id={props.id} onSubmit={submit}>
-              <input onChange={name} />
+              <input autoFocus onChange={name} />
               <button id={props.id}>create</button>
             </form>
           )}
 
-          {context.tasks.map((i, index) =>
+          {tasks.map((i, index) =>
             props.id === i.parentId ? (
               <Draggable key={i.id} draggableId={i.id} index={index}>
                 {(provided) => (

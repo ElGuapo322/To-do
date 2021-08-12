@@ -1,11 +1,21 @@
 import React, { useState } from "react";
-import { Context } from "../MainPage/MainPage";
+
 import "../MainPage/Main.css";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  createCommentAction,
+  deleteCommentAction,
+  deleteTaskAction,
+} from "../Redux/Action";
+import { v4 as uuidv4 } from "uuid";
 
 export default function Task(props) {
-  const context = React.useContext(Context);
   const [commentButtonOpen, setCommentButtonOpen] = useState(false);
   const [commentText, setCommentText] = useState("");
+
+  const dispatch = useDispatch();
+  const { tasks } = useSelector((state) => state.toDoReducer);
+  const { comments } = useSelector((state) => state.toDoReducer);
 
   const commentOpen = () => {
     setCommentButtonOpen(!commentButtonOpen);
@@ -15,16 +25,26 @@ export default function Task(props) {
   };
   const submit = (e) => {
     e.preventDefault();
-    context.createComment(commentText, props.id, props.grandId);
+    if (commentText === "") {
+      return;
+    }
+    const comment = {
+      text: commentText,
+      grandId: props.grandId,
+      parentId: props.id,
+      id: uuidv4(),
+    };
+    dispatch(createCommentAction(comment));
+
     setCommentText("");
     setCommentButtonOpen(false);
   };
 
   const deleteTaskBtn = (e) => {
-    context.delTask(e.target.id);
+    dispatch(deleteTaskAction(e.target.id));
   };
   const deleteCommentBtn = (e) => {
-    context.delComment(e.target.id);
+    dispatch(deleteCommentAction(e.target.id));
   };
   return (
     <div className="task" id={props.id}>
@@ -35,7 +55,7 @@ export default function Task(props) {
         </button>
       </div>
 
-      {context.comments.map((i) =>
+      {comments.map((i) =>
         props.id === i.parentId ? (
           <div className="comment">
             <div>{i.text}</div>
@@ -54,7 +74,7 @@ export default function Task(props) {
 
       {commentButtonOpen ? (
         <form onSubmit={submit}>
-          <input onChange={nameComment} />
+          <input autoFocus onChange={nameComment} />
           <button type="submit" id={props.id}>
             add comment
           </button>
