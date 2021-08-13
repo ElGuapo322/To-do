@@ -28,15 +28,21 @@ export const toDoReducer = (state = initialState, action) => {
         columns: [...state.columns, action.payload],
       };
     case "DELETE_COLUMN":
-      console.log(action.payload);
-      const newColumns = state.columns.filter((i) => action.payload !== i.id);
-      console.log(newColumns);
-      return {
-        ...state,
-        columns: [...newColumns],
-      };
+      const checkTasks = state.tasks.filter(
+        (i) => i.parentId === action.payload
+      );
+      if (checkTasks.length === 0) {
+        const newColumns = state.columns.filter((i) => action.payload !== i.id);
+        console.log("колонны", newColumns);
+        return {
+          ...state,
+          columns: [...newColumns],
+        };
+      } else return state;
+
     case "CREATE_TASK":
-      console.log(state.tasks);
+      console.log("таски", state.tasks);
+      console.log(action.payload);
       return {
         ...state,
         tasks: [...state.tasks, action.payload],

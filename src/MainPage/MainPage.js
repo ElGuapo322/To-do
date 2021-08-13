@@ -6,26 +6,26 @@ import Column from "../components/Column";
 import { useSelector, useDispatch } from "react-redux";
 import { createColumnAction, dragAction } from "../Redux/Action";
 
-const dataset = {
-  columns: [
-    {
-      id: uuidv4(),
-      title: "Сделать",
-    },
-    {
-      id: uuidv4(),
-      title: "В работе",
-    },
-    {
-      id: uuidv4(),
-      title: "Сделано",
-    },
-  ],
-  tasks: [],
-  comments: [],
-};
+// const dataset = {
+//   columns: [
+//     {
+//       id: uuidv4(),
+//       title: "Сделать",
+//     },
+//     {
+//       id: uuidv4(),
+//       title: "В работе",
+//     },
+//     {
+//       id: uuidv4(),
+//       title: "Сделано",
+//     },
+//   ],
+//   tasks: [],
+//   comments: [],
+// };
 
-export const Context = React.createContext(dataset);
+// export const Context = React.createContext(dataset);
 
 export default function MainPage() {
   const [columnName, setColumnName] = useState("");
@@ -71,9 +71,6 @@ export default function MainPage() {
       destination: destination,
     };
     dispatch(dragAction(obj));
-  };
-  const handleFocus = (e) => {
-    console.log("focus");
   };
 
   return (

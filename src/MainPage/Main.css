@@ -65,3 +65,7 @@
   justify-content: space-between;
   border-bottom: 2px solid;
 }
+.task-form {
+  display: flex;
+  flex-direction: column;
+}

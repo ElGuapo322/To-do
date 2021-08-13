@@ -10,12 +10,24 @@ export default function Column(props) {
   const [addButtonOpen, setAddButtonOpen] = useState(false);
   const [task, setTask] = useState([]);
   const [taskName, setTaskName] = useState("");
+  const [taskDescription, setTaskDescription] = useState("");
+  const [taskExecutor, setTaskExecutor] = useState("");
+  const [taskDate, setTaskDate] = useState("");
 
   const dispatch = useDispatch();
   const { tasks } = useSelector((state) => state.toDoReducer);
 
   const name = (e) => {
     setTaskName(e.target.value);
+  };
+  const description = (e) => {
+    setTaskDescription(e.target.value);
+  };
+  const executor = (e) => {
+    setTaskExecutor(e.target.value);
+  };
+  const date = (e) => {
+    setTaskDate(e.target.value);
   };
 
   const delButton = (e) => {
@@ -32,6 +44,9 @@ export default function Column(props) {
 
     const task = {
       title: taskName,
+      description: taskDescription,
+      executor: taskExecutor,
+      date: taskDate,
       parentId: props.id,
       id: uuidv4(),
     };
@@ -59,8 +74,12 @@ export default function Column(props) {
               AddButton
             </button>
           ) : (
-            <form id={props.id} onSubmit={submit}>
-              <input autoFocus onChange={name} />
+            <form className="task-form" id={props.id} onSubmit={submit}>
+              <input placeholder="Имя задачи" autoFocus onChange={name} />
+              <input placeholder="Описание задачи" onChange={description} />
+              <input placeholder="Исполнитель" onChange={executor} />
+              <input placeholder="Срок исполнения" onChange={date} />
+
               <button id={props.id}>create</button>
             </form>
           )}
@@ -83,6 +102,9 @@ export default function Column(props) {
                       key={i.id}
                       id={i.id}
                       title={i.title}
+                      description={i.description}
+                      executor={i.executor}
+                      date={i.date}
                     />
                   </div>
                 )}

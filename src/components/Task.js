@@ -50,9 +50,15 @@ export default function Task(props) {
     <div className="task" id={props.id}>
       <div className="task-title">
         <div>{props.title}</div>
+
         <button className="delete-button" onClick={deleteTaskBtn} id={props.id}>
           X
         </button>
+      </div>
+      <div className="task-info">
+        <div>{props.description}</div>
+        <div>{props.executor}</div>
+        <div>{props.date}</div>
       </div>
 
       {comments.map((i) =>
