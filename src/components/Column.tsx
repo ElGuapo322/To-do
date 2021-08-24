@@ -1,12 +1,19 @@
-import React, { useState } from "react";
+import React, { HtmlHTMLAttributes, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import "../MainPage/Main.css";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import Task from "./Task";
 import { useSelector, useDispatch } from "react-redux";
 import { createTaskAction, deleteColumnAction } from "../Redux/Action";
+import { UseTypedSelector } from "../hooks/useTypedSelector";
 
-export default function Column(props) {
+interface ColumnProps {
+  //key: string;
+  id: string;
+  title: string;
+}
+
+export default function Column({ id, title }: ColumnProps) {
   const [addButtonOpen, setAddButtonOpen] = useState(false);
   const [task, setTask] = useState([]);
   const [taskName, setTaskName] = useState("");
@@ -15,28 +22,28 @@ export default function Column(props) {
   const [taskDate, setTaskDate] = useState("");
 
   const dispatch = useDispatch();
-  const { tasks } = useSelector((state) => state.toDoReducer);
+  const { tasks } = UseTypedSelector((state) => state.toDoReducer);
 
-  const name = (e) => {
+  const name = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTaskName(e.target.value);
   };
-  const description = (e) => {
+  const description = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTaskDescription(e.target.value);
   };
-  const executor = (e) => {
+  const executor = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTaskExecutor(e.target.value);
   };
-  const date = (e) => {
+  const date = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTaskDate(e.target.value);
   };
 
-  const delButton = (e) => {
-    let id = e.target.id;
+  const delButton = (e: React.MouseEvent<HTMLButtonElement>) => {
+    let id = e.currentTarget.id;
 
     dispatch(deleteColumnAction(id));
   };
 
-  const submit = (e) => {
+  const submit = (e: any) => {
     e.preventDefault();
     if (taskName === "") {
       return;
@@ -47,7 +54,7 @@ export default function Column(props) {
       description: taskDescription,
       executor: taskExecutor,
       date: taskDate,
-      parentId: props.id,
+      parentId: id,
       id: uuidv4(),
     };
     dispatch(createTaskAction(task));
@@ -55,37 +62,37 @@ export default function Column(props) {
     setAddButtonOpen(false);
   };
   return (
-    <Droppable droppableId={props.id}>
+    <Droppable droppableId={id}>
       {(provided) => (
         <div
-          id={props.id}
+          id={id}
           className="column"
           {...provided.droppableProps}
           ref={provided.innerRef}
         >
           <div className="title">
-            {props.title}
-            <button className="delete-button" id={props.id} onClick={delButton}>
+            {title}
+            <button className="delete-button" id={id} onClick={delButton}>
               X
             </button>
           </div>
           {!addButtonOpen ? (
-            <button onClick={() => setAddButtonOpen(true)} id={props.id}>
+            <button onClick={() => setAddButtonOpen(true)} id={id}>
               AddButton
             </button>
           ) : (
-            <form className="task-form" id={props.id} onSubmit={submit}>
+            <form className="task-form" id={id} onSubmit={submit}>
               <input placeholder="Имя задачи" autoFocus onChange={name} />
               <input placeholder="Описание задачи" onChange={description} />
               <input placeholder="Исполнитель" onChange={executor} />
               <input placeholder="Срок исполнения" onChange={date} />
 
-              <button id={props.id}>create</button>
+              <button id={id}>create</button>
             </form>
           )}
 
-          {tasks.map((i, index) =>
-            props.id === i.parentId ? (
+          {tasks.map((i, index: number) =>
+            id === i.parentId ? (
               <Draggable key={i.id} draggableId={i.id} index={index}>
                 {(provided) => (
                   <div
@@ -98,7 +105,7 @@ export default function Column(props) {
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
-                      grandId={props.id}
+                      grandId={id}
                       key={i.id}
                       id={i.id}
                       title={i.title}

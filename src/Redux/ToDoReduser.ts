@@ -1,6 +1,36 @@
 import { v4 as uuidv4 } from "uuid";
 
-const initialState = {
+interface Task {
+  title: string;
+  description: string;
+  executor: string;
+  date: string;
+  parentId: string;
+  id: string;
+}
+interface Column {
+  id: string;
+  title: string;
+}
+interface Comment {
+  text: string;
+  grandId: string;
+  parentId: string;
+  id: string;
+}
+
+interface ToDoState {
+  columns: Column[];
+  tasks: Task[];
+  comments: Comment[];
+}
+
+interface ToDoAction {
+  type: string;
+  payload?: any;
+}
+
+const initialState: ToDoState = {
   columns: [
     {
       id: uuidv4(),
@@ -19,7 +49,10 @@ const initialState = {
   comments: [],
 };
 
-export const toDoReducer = (state = initialState, action) => {
+export const toDoReducer = (
+  state = initialState,
+  action: ToDoAction
+): ToDoState => {
   switch (action.type) {
     case "CREATE_COLUMN":
       console.log(state);
@@ -68,8 +101,15 @@ export const toDoReducer = (state = initialState, action) => {
       console.log(action.payload);
       const taskCopy = state.tasks[action.payload.source.index];
       taskCopy.parentId = action.payload.destination.droppableId;
-      state.tasks.splice(action.payload.source.index, 1);
-      state.tasks.splice(action.payload.destination.index, 0, taskCopy);
+      let nState = [...state.tasks];
+      nState.splice(action.payload.source.index, 1);
+      console.log("стейт 1", nState);
+      nState.splice(action.payload.destination.index, 0, taskCopy);
+      console.log("стейт 1", nState);
+      return {
+        ...state,
+        tasks: [...nState],
+      };
 
     default:
       return state;

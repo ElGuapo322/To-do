@@ -5,6 +5,7 @@ import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import Column from "../components/Column";
 import { useSelector, useDispatch } from "react-redux";
 import { createColumnAction, dragAction } from "../Redux/Action";
+import { UseTypedSelector } from "../hooks/useTypedSelector";
 
 // const dataset = {
 //   columns: [
@@ -32,13 +33,13 @@ export default function MainPage() {
   const [addColumnOpen, setAddColumnOpen] = useState(false);
 
   const dispatch = useDispatch();
-  const { columns } = useSelector((state) => state.toDoReducer);
+  const { columns } = UseTypedSelector((state) => state.toDoReducer);
 
-  const colName = (e) => {
+  const colName = (e: React.ChangeEvent<HTMLInputElement>) => {
     setColumnName(e.target.value);
   };
 
-  const addColumn = (e) => {
+  const addColumn = (e: any) => {
     e.preventDefault();
     if (columnName === "") {
       return;
@@ -51,7 +52,12 @@ export default function MainPage() {
     setAddColumnOpen(false);
   };
 
-  const handleOnDragEnd = ({ destination, source }) => {
+  interface handleOnDragEndProps {
+    destination?: any;
+    source?: any;
+  }
+
+  const handleOnDragEnd = ({ destination, source }: handleOnDragEndProps) => {
     console.log("from", source);
     console.log("to", destination);
 
@@ -77,7 +83,7 @@ export default function MainPage() {
     <DragDropContext onDragEnd={handleOnDragEnd}>
       <div className="main">
         {columns.map((i) => (
-          <Column key={i.id} id={i.id} title={i.title} onClick />
+          <Column key={i.id} id={i.id} title={i.title} />
         ))}
         {!addColumnOpen ? (
           <button onClick={() => setAddColumnOpen(true)}>Добавить</button>
